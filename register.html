@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+<body>
+    <nav>
+        <a href="index.html">🏠 Home</a>
+        <a href="register.html">📝 Register</a>
+        <a href="login.html">🔑 Login</a>
+        <a href="exit.html">🚪 Exit</a>
+    </nav>
+    <h1>Register</h1>
+    <form id="registrationForm">
+        <input type="text" id="name" placeholder="Full Name" required><br>
+        <input type="text" id="department" placeholder="Department" required><br>
+        <input type="number" id="year" placeholder="Year" required><br>
+        <input type="text" id="section" placeholder="Section" required><br>
+        <input type="password" id="password" placeholder="Password" required><br>
+        <input type="password" id="confirm_password" placeholder="Confirm Password" required><br>
+        <button type="submit" class="register-btn">Register</button>
+    </form>
+    <p id="message"></p>
+    <script>
+        document.getElementById("registrationForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let name = document.getElementById("name").value;
+            let department = document.getElementById("department").value;
+            let year = document.getElementById("year").value;
+            let section = document.getElementById("section").value;
+            let password = document.getElementById("password").value;
+            let confirmPassword = document.getElementById("confirm_password").value;
+
+            if (password !== confirmPassword) {
+                document.getElementById("message").textContent = "Passwords do not match!";
+                return;
+            }
+
+            // Create Excel data
+            const data = [
+                ["Name", "Department", "Year", "Section", "Password"], // Headers
+                [name, department, year, section, password] // Data
+            ];
+
+            // Create a new workbook
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, "Registration Details");
+
+            // Write the Excel file
+            XLSX.writeFile(wb, "registration_details.xlsx");
+
+            // Save registration data in localStorage as well
+            localStorage.setItem(name, JSON.stringify({ department, year, section, password }));
+
+            // Show registration success message and redirect to login page
+            alert("Registration Successful!");
+            window.location.href = "login.html";
+        });
+    </script>
+</body>
+</html>
